@@ -10,15 +10,10 @@ public class MainClass {
         try{
        sum =countArray(strMas);
        }
-       catch (MyArraySizeException e){
+       catch (MyArrayDataException | MyArraySizeException e){
             System.out.println(e);
             return;
         }
-       catch (MyArrayDataException e){
-           System.out.println(e);
-           return;
-       }
-
         System.out.println("Сумма членов массива равна " +  sum);
     }
 
