@@ -1,19 +1,17 @@
 package com.geekbrains;
 
-public class MyArrayDataException extends Exception {
+public class MyArrayDataException extends NumberFormatException {
     private int stringError;
     private int columnError;
 
-    public MyArrayDataException(int stringEror, int columnEror) {
-        this.stringError = stringEror;
-        this.columnError = columnEror;
+    public MyArrayDataException(int stringError, int columnError) {
+        this.stringError = stringError;
+        this.columnError = columnError;
     }
 
     @Override
     public String toString() {
-        return "Ошибка преобразования к числу" +
-                "stringError=" + stringError +
-                ", columnError=" + columnError +
-                '}';
+        return "Ошибка преобразования к числу. Строка: " + stringError +
+                ", колонка: " + columnError;
     }
 }
