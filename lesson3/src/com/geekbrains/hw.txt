@@ -1,0 +1,83 @@
+package com.geekbrains;
+
+public class MainClass {
+    public static void main(String[] args) {
+        MyArray ma = new MyArray(20);
+        System.out.println("Unique words: "+ma.getUniqueWord());
+        System.out.println("Count words: "+ma.getCountWord());
+
+        PhoneBook phoneBook = new PhoneBook();
+        PhoneBook.testPhoneBook(phoneBook);
+    }
+}
+
+package com.geekbrains;
+
+import java.util.*;
+
+public class MyArray {
+    private String array[];
+
+    public MyArray(int size) {
+        array = new String[size];
+        fillArray();
+    }
+    private void fillArray(){
+        for(int i=0; i<array.length; i++){
+            array[i] ="word_"+(int)(10*Math.random());
+        }
+    }
+    public Set<String> getUniqueWord(){
+        return  new HashSet<>(Arrays.asList(array));
+    }
+    public HashMap<String,Integer> getCountWord(){
+        HashMap<String,Integer> hm = new HashMap<>();
+        for(String s : array){
+            if (hm.containsKey(s)){
+                hm.put(s,hm.get(s)+1);
+            }
+            else hm.put(s,1);
+        }
+        return hm;
+    }
+}
+
+package com.geekbrains;
+
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class PhoneBook {
+    private HashMap<String,HashSet<String>> phoneBook;
+    public PhoneBook(){
+        phoneBook = new HashMap<>();
+    }
+    public void add(String surname, String phone){
+        if (phoneBook.containsKey(surname)){
+            HashSet<String> hs = phoneBook.get(surname);
+            hs.add(phone);
+            phoneBook.put(surname,hs);
+        }
+        else {
+            HashSet<String> hs = new HashSet<String>();
+            hs.add(phone);
+            phoneBook.put(surname,hs);
+        }
+    }
+    public String get(String surname){
+       HashSet<String> hs = phoneBook.get(surname);
+       return surname +" "+ hs;
+    }
+    public static void testPhoneBook(PhoneBook phoneBook){
+        phoneBook.add("Ivanov","88007900000");
+        phoneBook.add("Ivanov","88007900001");
+        phoneBook.add("Ivanov","88007900002");
+        phoneBook.add("Petrov","88007900007");
+        phoneBook.add("Sidorow","88007900011");
+        phoneBook.add("Sidorow","88007900011");
+
+        System.out.println(phoneBook.get("Ivanov"));
+        System.out.println(phoneBook.get("Petrov"));
+        System.out.println(phoneBook.get("Sidorow"));
+    }
+}
