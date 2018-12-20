@@ -36,6 +36,16 @@ public class Server {
             o.sendMsg(msg);
         }
     }
+    public void sendPrivateMsg(String msg) {
+        String [] msgarr = msg.split("\\s");
+        String nickname = msgarr[2];
+        for (ClientHandler o : clients) {
+            if (o.getNickname().equals(nickname)) {
+                o.sendMsg("Private msg from "+msg.replace(msgarr[1]+" "+msgarr[2]+" ",""));
+                break;
+            }
+        }
+    }
 
     public void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);

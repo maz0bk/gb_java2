@@ -43,7 +43,10 @@ public class ClientHandler {
                         if (msg.equals("/end")) {
                             break;
                         }
-                        server.broadcastMsg(nickname + ": " + msg);
+                        if (msg.startsWith("/w")) {
+                            server.sendPrivateMsg(nickname + ": " + msg);
+                        }
+                        else server.broadcastMsg(nickname + ": " + msg);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
