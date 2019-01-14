@@ -1,0 +1,152 @@
+/*
+Не получилось в классе Box сделать единый медот для заполнения любых коробок. Можно ли имея коробку как-то узнать какой
+тип должен лежать в ней, что бы создавать объекты именно этого типа? Сделал 2 метода fillBoxApples и fillBoxOranges.
+*/
+public class Main {
+    public static void main(String[] args) {
+        String [] arr = {"a","b","c"};
+        arr = changeElementPlace(arr,0,2);
+        for (int i = 0; i < arr.length; i++) {
+            System.out.println(arr[i]);
+        }
+        ArrayList <String> list = arrayToArrayList(arr);
+        for (String s: list ) {
+            System.out.println(s);
+        }
+    }
+
+    public static <T> T[] changeElementPlace( T[]arr, int firstElIndex, int secondElIndex){
+        T tmp;
+        tmp = arr[firstElIndex];
+        arr[firstElIndex] = arr[secondElIndex];
+        arr[secondElIndex] = tmp;
+        return arr;
+    }
+
+    public static <T> ArrayList arrayToArrayList(T[]arr){
+        ArrayList<T> list = new ArrayList<>();
+        Arrays.asList(arr);
+        Collections.addAll(list,arr);
+        return list;
+    }
+}
+
+package BigTask;
+
+public abstract class Fruit {
+    public abstract float getWeight();
+}
+
+package BigTask;
+
+public class Apple extends Fruit {
+    private float weight;
+
+    public Apple() {
+        weight = 1.0f;
+    }
+
+    @Override
+    public float getWeight() {
+        return weight;
+    }
+}
+
+package BigTask;
+
+public class Orange extends Fruit {
+    private float weight;
+
+    public Orange() {
+        this.weight = 1.5f;
+    }
+
+    @Override
+    public float getWeight() {
+        return weight;
+    }
+}
+
+package BigTask;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class Box <T extends Fruit>{
+    private ArrayList <T> fruitList;
+
+    public float getWeight(){
+        if(fruitList.isEmpty()) return 0;
+        return fruitList.get(0).getWeight()*fruitList.size();
+    }
+    public boolean compare (Box box){
+        return Math.abs(getWeight() - box.getWeight()) < 0.0001;
+    }
+    public void addFruit (T fruit){
+        fruitList.add(fruit);
+    }
+    public void pourEnotherBox(Box<T> secondBox) {
+        if (fruitList.isEmpty()) return;
+
+        Iterator<T> iter = fruitList.iterator();
+        while (iter.hasNext()) {
+            secondBox.addFruit(iter.next());
+            iter.remove();
+        }
+    }
+
+    public static void fillBoxApples(Box box){
+        int max = (int)(6*Math.random());
+        for (int i = 0; i < max; i++) {
+            box.addFruit(new Apple());
+        }
+    }
+    public static void fillBoxOranges(Box box){
+        int max = (int)(6*Math.random());
+        for (int i = 0; i < max; i++) {
+            box.addFruit(new Orange());
+        }
+    }
+
+    public Box() {
+        fruitList = new ArrayList<>();
+    }
+}
+
+package BigTask;
+
+public class TestBox {
+    public static void main(String[] args) {
+        Box <Apple> boxAp = new Box<>();
+        Box <Apple> boxAp2 = new Box<>();
+        Box <Orange> boxOr1 = new Box<>();
+        Box <Orange> boxOr2 = new Box<>();
+        Box.fillBoxApples(boxAp);
+        Box.fillBoxApples(boxAp2);
+        Box.fillBoxOranges(boxOr1);
+        Box.fillBoxOranges(boxOr2);
+
+        System.out.println(boxAp.getWeight());
+        System.out.println(boxAp2.getWeight());
+        System.out.println(boxOr1.getWeight());
+        System.out.println(boxOr2.getWeight());
+
+        System.out.println(boxAp.compare(boxAp2));
+        System.out.println(boxAp.compare(boxOr1));
+        System.out.println(boxAp.compare(boxOr2));
+        System.out.println(boxAp2.compare(boxOr1));
+        System.out.println(boxAp2.compare(boxOr2));
+        System.out.println(boxOr1.compare(boxOr2));
+
+        boxAp.pourEnotherBox(boxAp2);
+        boxOr1.pourEnotherBox(boxOr2);
+
+        System.out.println(boxAp.getWeight());
+        System.out.println(boxAp2.getWeight());
+        System.out.println(boxOr1.getWeight());
+        System.out.println(boxOr2.getWeight());
+
+        System.out.println(boxAp2.compare(boxOr2));
+    }
+
+}

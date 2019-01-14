@@ -42,6 +42,7 @@ public class Controller implements Initializable {
         msgPanel.setManaged(authentificated);
         if (!authentificated) {
             nickname = "";
+
         }
     }
 
