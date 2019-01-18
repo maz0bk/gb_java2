@@ -16,7 +16,7 @@ public class Box <T extends Fruit>{
     public void addFruit (T fruit){
         fruitList.add(fruit);
     }
-    public void pourEnotherBox(Box<T> secondBox) {
+    public void pourEnotherBox(Box<? super T> secondBox) {
         if (fruitList.isEmpty()) return;
 
         Iterator<T> iter = fruitList.iterator();
