@@ -1,6 +1,4 @@
-package com.geekbrains.server;
-
-import java.sql.*;
+//Сделал класс для авторизации с подключением базы mySQL. В классе сервер поменял только  authService = new SQLAuth(); Сделал медот для смены ника, но к клиенту не успел подключить.
 
 public class SQLAuth implements AuthService {
     private static Connection connection;
@@ -50,7 +48,7 @@ public class SQLAuth implements AuthService {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
-           // disconnect();
+//            disconnect();
         }
 
     }

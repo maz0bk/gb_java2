@@ -56,7 +56,7 @@ public class Controller implements Initializable {
                 msgField.setText("/w " + nickname + " ");
                 msgField.requestFocus();
                 msgField.selectEnd();
-            } 
+            }
         });
         linkCallbacks();
     }
