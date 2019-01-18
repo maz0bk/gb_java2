@@ -1,0 +1,8 @@
+//Создание таблицы пользователей
+CREATE TABLE `brains_chat`.`users` (
+  `idusers` INT NOT NULL AUTO_INCREMENT,
+  `login` VARCHAR(50) NULL,
+  `password` VARCHAR(15) NULL,
+  `nick` VARCHAR(45) NULL,
+  PRIMARY KEY (`idusers`),
+  UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE);
