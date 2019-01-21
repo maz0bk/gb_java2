@@ -34,4 +34,20 @@ public class SimpleAuthService implements AuthService {
         }
         return null;
     }
+
+    @Override
+    public boolean changeNick(String oldNick, String newNick) {
+        for (UserData o : users) {
+            if(o.nickname.equals(newNick)) {
+                return false;
+            }
+        }
+        for (UserData o : users) {
+            if (o.login.equals(oldNick)) {
+                o.nickname = newNick;
+                return true;
+            }
+        }
+        return false;
+    }
 }

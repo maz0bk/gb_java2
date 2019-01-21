@@ -57,7 +57,7 @@ public class Network {
             socket = new Socket("localhost", 8189);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            Thread t = new Thread(() -> {
+            Thread clientListenerThread = new Thread(() -> {
                 try {
                     while (true) {
                         String msg = in.readUTF();
@@ -79,8 +79,8 @@ public class Network {
                     closeConnection();
                 }
             });
-            t.setDaemon(true);
-            t.start();
+            clientListenerThread.setDaemon(true);
+            clientListenerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

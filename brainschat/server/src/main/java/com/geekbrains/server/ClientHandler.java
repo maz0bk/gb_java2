@@ -49,6 +49,21 @@ public class ClientHandler {
                                 String[] tokens = msg.split("\\s", 3);
                                 server.privateMsg(this, tokens[1], tokens[2]);
                             }
+                            if (msg.startsWith("/changenick")){
+                                String[] tokens = msg.split("\\s", 2);
+                                if (tokens[1].contains(" ")){
+                                    sendMsg("Ник не может соедржать пробелы");
+                                    continue;
+                                }
+                                if (server.getAuthService().changeNick(this.nickname,tokens[1])){
+                                    sendMsg("/yourmickis "+tokens[1]);
+                                    this.nickname = tokens[1];
+                                    server.broadcastClientsList();
+                                } else {
+                                    sendMsg("Не удалось изменить ник. Такой ник "+ tokens[1]+ " уже существует");
+                                }
+
+                            }
                         } else {
                             server.broadcastMsg(nickname + ": " + msg);
                         }

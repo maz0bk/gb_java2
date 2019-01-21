@@ -3,6 +3,7 @@ package com.geekbrains.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Vector;
 
 public class Server {
@@ -15,7 +16,11 @@ public class Server {
 
     public Server() {
         clients = new Vector<>();
-//        authService = new SimpleAuthService();
+
+        if ( !SQLHandler.connect() ){
+            throw new RuntimeException("Can't connect to database");
+        }
+
         authService = new SQLAuth();
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
             System.out.println("Сервер запущен на порту 8189");
@@ -26,8 +31,10 @@ public class Server {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("Сервер завершил свою работу");
+            SQLHandler.disconnect();
         }
-        System.out.println("Сервер завершил свою работу");
     }
 
     public void broadcastMsg(String msg) {
