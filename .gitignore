@@ -25,3 +25,5 @@ buildNumber.properties
 #common
 **/out
 **.class
+brainschat/history_ann.txt
+brainschat/history_SuperBill.txt

@@ -33,6 +33,7 @@ public class Controller implements Initializable {
 
     private boolean authentificated;
     private String nickname;
+    private History chatHistory;
 
     public void setAuthentificated(boolean authentificated) {
         this.authentificated = authentificated;
@@ -69,6 +70,8 @@ public class Controller implements Initializable {
 
     public void sendMsg() {
         if (Network.sendMsg(msgField.getText())) {
+            //Записываем в историю
+            chatHistory.writeMsgToHistory(nickname+": "+msgField.getText()+"\n");
             msgField.clear();
             msgField.requestFocus();
         }
@@ -89,6 +92,9 @@ public class Controller implements Initializable {
         Network.setCallOnAuthentificated(args -> {
             setAuthentificated(true);
             nickname = args[0].toString();
+            //Выводим историю
+            chatHistory = new History(nickname);
+            textArea.appendText(chatHistory.getLastHistory(100)+"\n");
         });
 
         Network.setCallOnMsgReceived(args -> {
@@ -108,6 +114,8 @@ public class Controller implements Initializable {
                 }
             } else {
                 textArea.appendText(msg + "\n");
+                //Записываем в историю
+                chatHistory.writeMsgToHistory(msg + "\n");
             }
         });
     }
