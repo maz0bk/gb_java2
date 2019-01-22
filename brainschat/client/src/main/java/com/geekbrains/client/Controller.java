@@ -1,17 +1,11 @@
 package com.geekbrains.client;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -70,8 +64,6 @@ public class Controller implements Initializable {
 
     public void sendMsg() {
         if (Network.sendMsg(msgField.getText())) {
-            //Записываем в историю
-            chatHistory.writeMsgToHistory(nickname+": "+msgField.getText()+"\n");
             msgField.clear();
             msgField.requestFocus();
         }
@@ -94,7 +86,8 @@ public class Controller implements Initializable {
             nickname = args[0].toString();
             //Выводим историю
             chatHistory = new History(nickname);
-            textArea.appendText(chatHistory.getLastHistory(100)+"\n");
+//            textArea.appendText(chatHistory.getAllHistory(100)+"\n");
+            textArea.appendText(chatHistory.getLastHistory(5)+"\n");
         });
 
         Network.setCallOnMsgReceived(args -> {

@@ -1,3 +1,9 @@
+/*
+В Controller добавил переменную  private History chatHistory;
+В метод linkCallbacks() в Network.setCallOnAuthentificated после аутентификации добавил вывод истории textArea.appendText(chatHistory.getLastHistory(100)+"\n");
+в Network.setCallOnMsgReceived если пришло обычное сообщение пишем историю  chatHistory.writeMsgToHistory(msg + "\n");
+*/
+
 package com.geekbrains.client;
 
 import java.io.*;
