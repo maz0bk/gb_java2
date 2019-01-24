@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler {
     private String nickname;
@@ -11,72 +13,40 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+//    private ExecutorService service;
 
     public String getNickname() {
         return nickname;
     }
 
-    public ClientHandler(Server server, Socket socket) {
-        try {
+    public ClientHandler(Server server, Socket socket) throws IOException {
+
             this.server = server;
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
+//            this.service = Executors.newCachedThreadPool();
+//            service.execute(() -> {
+//                try {
+//                    while (!checkAuth()) ;
+//                    while (readMessage()) ;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    ClientHandler.this.disconnect();
+//                }
+//            });
             new Thread(() -> {
                 try {
-                    while (true) {
-                        String msg = in.readUTF();
-                        // /auth login1 pass1
-                        if (msg.startsWith("/auth ")) {
-                            String[] tokens = msg.split("\\s");
-                            String nick = server.getAuthService().getNicknameByLoginAndPassword(tokens[1], tokens[2]);
-                            if (nick != null && !server.isNickBusy(nick)) {
-                                sendMsg("/authok " + nick);
-                                nickname = nick;
-                                server.subscribe(this);
-                                break;
-                            }
-                        }
-                    }
-                    while (true) {
-                        String msg = in.readUTF();
-                        if(msg.startsWith("/")) {
-                            if (msg.equals("/end")) {
-                                sendMsg("/end");
-                                break;
-                            }
-                            if(msg.startsWith("/w ")) {
-                                String[] tokens = msg.split("\\s", 3);
-                                server.privateMsg(this, tokens[1], tokens[2]);
-                            }
-                            if (msg.startsWith("/changenick")){
-                                String[] tokens = msg.split("\\s", 2);
-                                if (tokens[1].contains(" ")){
-                                    sendMsg("Ник не может соедржать пробелы");
-                                    continue;
-                                }
-                                if (server.getAuthService().changeNick(this.nickname,tokens[1])){
-                                    sendMsg("/yourmickis "+tokens[1]);
-                                    this.nickname = tokens[1];
-                                    server.broadcastClientsList();
-                                } else {
-                                    sendMsg("Не удалось изменить ник. Такой ник "+ tokens[1]+ " уже существует");
-                                }
-
-                            }
-                        } else {
-                            server.broadcastMsg(nickname + ": " + msg);
-                        }
-                    }
+                    while (!checkAuth());
+                    while (readMessage());
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     ClientHandler.this.disconnect();
                 }
             }).start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void sendMsg(String msg) {
@@ -104,5 +74,57 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean checkAuth() throws IOException {
+        String msg = in.readUTF();
+        // /auth login1 pass1
+        if (msg.startsWith("/auth ")) {
+            String[] tokens = msg.split("\\s");
+            String nick = server.getAuthService().getNicknameByLoginAndPassword(tokens[1], tokens[2]);
+            if (nick != null && !server.isNickBusy(nick)) {
+                sendMsg("/authok " + nick);
+                nickname = nick;
+                server.subscribe(this);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean readMessage() throws IOException {
+        String msg = in.readUTF();
+        if (!msg.startsWith("/")) {
+            server.broadcastMsg(nickname + ": " + msg);
+            return true;
+        }
+
+        if (msg.equals("/end")) {
+            sendMsg("/end");
+            return false;
+        }
+        if (msg.startsWith("/w ")) {
+            // /w nick2 Hello World!
+            String[] tokens = msg.split("\\s", 3);
+            server.privateMsg(this, tokens[1], tokens[2]);
+        }
+        if (msg.startsWith("/changenick ")) {
+            // /changenick myNewNick
+            String[] tokens = msg.split("\\s", 2);
+            if (tokens[1].contains(" ")) {
+                sendMsg("Ник не может содержать пробелов");
+                return true;
+            }
+            if (server.getAuthService().changeNick(this.nickname, tokens[1])) {
+                sendMsg("/yournickis " + tokens[1]);
+                sendMsg("Ваш ник изменен на " + tokens[1]);
+                this.nickname = tokens[1];
+                server.broadcastClientsList();
+            } else {
+                sendMsg("Не удалось изменить ник. Такой ник " + tokens[1] + " уже существует");
+            }
+        }
+        return true;
+
     }
 }
