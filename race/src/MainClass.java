@@ -1,12 +1,18 @@
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 
 public class MainClass {
     public static final int CARS_COUNT = 4;
-    private static CountDownLatch cdlStart = new CountDownLatch(CARS_COUNT);
+    private static volatile Car winner;
+    private static CyclicBarrier cbBeforeStart = new CyclicBarrier(CARS_COUNT+1);
+    private static CyclicBarrier cbAfterStart = new CyclicBarrier(CARS_COUNT+1);
+    private static CyclicBarrier cbBeforeEnd = new CyclicBarrier(CARS_COUNT+1);
+
     public static void main(String[] args) {
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Подготовка!!!");
         Race race = new Race(new Road(60), new Tunnel(), new Road(40));
-        Car.SetNumberCars(CARS_COUNT);
+
         Car[] cars = new Car[CARS_COUNT];
         for (int i = 0; i < cars.length; i++) {
             cars[i] = new Car(race, 20 + (int) (Math.random() * 10));
@@ -14,15 +20,42 @@ public class MainClass {
         for (int i = 0; i < cars.length; i++) {
             new Thread(cars[i]).start();
         }
+
+       cbBeforeStartAwait();
+        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
+        cbAfterStartAwait();
+
+        cbBeforeEndAwait();
+        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
+        System.out.println("Победитель: "+ winner.getName());
+    }
+
+    public  static void cbBeforeStartAwait(){
         try {
-            cdlStart.await();
-        } catch (InterruptedException e) {
+            cbBeforeStart.await();
+        } catch (InterruptedException |BrokenBarrierException e) {
             e.printStackTrace();
         }
-        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
-        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
-    public synchronized static void countDownStart(){
-        cdlStart.countDown();
+    public  static void cbAfterStartAwait(){
+        try {
+            cbAfterStart.await();
+        } catch (InterruptedException |BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+    }
+    public  static void cbBeforeEndAwait(){
+        try {
+            cbBeforeEnd.await();
+        } catch (InterruptedException |BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+    }
+    public static synchronized boolean setWinner(Car car){
+        if (winner == null) {
+            winner = car;
+        }
+        return winner==car;
+
     }
 }

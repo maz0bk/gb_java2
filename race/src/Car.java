@@ -1,18 +1,13 @@
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-
 public class Car implements Runnable {
     private static int CARS_COUNT;
-    private static CyclicBarrier cb;
+
     static {
         CARS_COUNT = 0;
     }
     private Race race;
     private int speed;
     private String name;
-    public static void SetNumberCars(int number){
-        cb = new CyclicBarrier(number);
-    }
+
     public String getName() {
         return name;
     }
@@ -34,15 +29,16 @@ public class Car implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            cb.await();
-        } catch (InterruptedException |BrokenBarrierException e) {
-            e.printStackTrace();
-        }
-        MainClass.countDownStart();
+
+        MainClass.cbBeforeStartAwait();
+        MainClass.cbAfterStartAwait();
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
         }
+        if(MainClass.setWinner(this)){
+            System.out.println("ПОБЕДА!!! "+ name);
+        }
+        MainClass.cbBeforeEndAwait();
     }
 
 }
