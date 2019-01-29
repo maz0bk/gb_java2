@@ -19,33 +19,32 @@ public class ClientHandler {
         return nickname;
     }
 
-    public ClientHandler(Server server, Socket socket) throws IOException {
+    public ClientHandler(Server server, Socket socket, ExecutorService exService) throws IOException {
 
             this.server = server;
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-//            this.service = Executors.newCachedThreadPool();
-//            service.execute(() -> {
-//                try {
-//                    while (!checkAuth()) ;
-//                    while (readMessage()) ;
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    ClientHandler.this.disconnect();
-//                }
-//            });
-            new Thread(() -> {
+            exService.execute(() -> {
                 try {
-                    while (!checkAuth());
-                    while (readMessage());
+                    while (!checkAuth()) ;
+                    while (readMessage()) ;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     ClientHandler.this.disconnect();
                 }
-            }).start();
+            });
+//            new Thread(() -> {
+//                try {
+//                    while (!checkAuth());
+//                    while (readMessage());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    ClientHandler.this.disconnect();
+//                }
+//            }).start();
 
     }
 
