@@ -1,0 +1,46 @@
+/* Совсем не было времени, написал только простые тесты, параметрический сделать не успел/*
+
+public class ArrayFunctions {
+
+    public static int [] endAfterFour(int mas[]) throws RuntimeException{
+        if (mas.length == 0) throw new RuntimeException();
+
+        boolean masCreate = false;
+        for (int i = mas.length-1; i >=0 ; i--) {
+            if (mas[i]==4){
+              return Arrays.copyOfRange(mas,i+1,mas.length);
+            }
+
+        }
+        if (!masCreate)throw new RuntimeException();
+
+        return null;
+    }
+    public static  boolean chekArray(int mas []){
+        boolean oneOk=false;
+        boolean fourOk =false;
+        for (int i = 0; i <mas.length ; i++) {
+            if (!oneOk) oneOk = mas[i]==1;
+            if (!fourOk) fourOk = mas[i]==4;
+            if (oneOk && fourOk) return true;
+        }
+        return false;
+    }
+}
+
+public class ArrayFunctionTest {
+    @Test
+    public  void testEndAfterFour(){
+        Assert.assertArrayEquals(new int []{2,3},ArrayFunctions.endAfterFour(new int[]{4,2,3}));
+    }
+
+    @Test
+    public  void testChekArray(){
+        Assert.assertTrue(ArrayFunctions.chekArray(new int[]{1,4,2,3}));
+    }
+    @Test
+    public  void testChekArray2(){
+        Assert.assertFalse(ArrayFunctions.chekArray(new int[]{4,2,3}));
+    }
+
+}
