@@ -1,3 +1,8 @@
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.TreeMap;
+
 public class Invoker {
     public static void start(Class c) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         Method[] methods = c.getDeclaredMethods();
@@ -36,65 +41,4 @@ public class Invoker {
         }
 
     }
-}
-
-public class MainApp {
-    public static void main(String[] args) {
-        try {
-            Invoker.start(MyTests.class);
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-public class MyTests {
-
-    @Test (priority = 10)
-    void test1(){
-        System.out.println("Test1");
-    }
-
-    @Test (priority = 1)
-    void test2(){
-        System.out.println("Test2");
-    }
-
-    @Test (priority = 2)
-    void test3(){
-        System.out.println("Test3");
-    }
-    @Test (priority = 8)
-    void test4(){
-        System.out.println("Test4");
-    }
-    @Test
-    void test5(){
-        System.out.println("Test5");
-    }
-    @BeforeSuite
-    void test0(){
-        System.out.println("Test0 before suite");
-    }
-
-    @AfterSuite
-    void test10(){
-        System.out.println("Test10 After suite");
-    }
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Test {
-    int priority() default 5;
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface BeforeSuite {
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface AfterSuite {
 }
